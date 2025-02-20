@@ -1,0 +1,4 @@
+sae-lens==4.4.5
+accelerate==1.4.0
+bitsandbytes==0.45.2
+sae-dashboard==0.6.4
