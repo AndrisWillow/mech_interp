@@ -4,4 +4,5 @@ bitsandbytes==0.45.2
 sae-dashboard==0.6.4
 transformer-lens==2.15.0 
 circuitsvis==1.43.3
-jupyter==1.1.1 
+jupyter==1.1.1
+sparsify==1.1.0

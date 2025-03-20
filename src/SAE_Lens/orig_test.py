@@ -9,7 +9,6 @@ from transformers import AutoTokenizer, BitsAndBytesConfig
 # Detect device
 device = "cuda" if torch.cuda.is_available() else "cpu"
 
-
 from datasets import load_dataset
 from transformer_lens import HookedTransformer
 from sae_lens import SAE
