@@ -1,6 +1,4 @@
 # Mechanistic interpretability
 A study project
 
-### Virtual env setup # TODO make something better
-source venv/mech_interp/bin/activate
-
+Tested using Python 3.12.3
