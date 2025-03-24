@@ -5,4 +5,4 @@ sae-dashboard==0.6.4
 transformer-lens==2.15.0 
 circuitsvis==1.43.3
 jupyter==1.1.1
-sparsify==1.1.0
+wandb==0.19.8 
