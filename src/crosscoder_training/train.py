@@ -5,12 +5,10 @@ from trainer import Trainer
 # %%
 
 # TODO add all variables here defined via CLI
-BASE_MODEL_NAME = "Qwen/Qwen2.5-0.5B"
-COMPARABLE_MODEL_NAME = "Qwen/Qwen2.5-0.5B-Instruct"
-HF_DS_NAME = "Pile-Lmsys-1m-tokenized-1024-Qwen2.5" # Expecting pretoekized dataset
-HF_REPO_NAME = "AndrisWillow"
+BASE_MODEL_NAME = "meta-llama/Llama-3.2-1B"
+COMPARABLE_MODEL_NAME = "meta-llama/Llama-3.2-1B-Instruct"
 MODEL_HOOKPOINT = "blocks.13.hook_resid_pre"
-SAE_EXPANSION_RATE = 16
+SAE_EXPANSION_RATE = 8
 
 WANDB_PROJECT = "Qwen-crosscoders"
 WANDB_ENTITY = "andris-willow-"

@@ -7,7 +7,10 @@ from datasets import load_dataset
 from pathlib import Path
 import torch
 from IPython import get_ipython
-from train import HF_DS_NAME, HF_REPO_NAME
+
+# TODO define one file for config
+HF_DS_NAME = "Pile-Lmsys-1m-tokenized-Llama-3.2-1B" # Expecting pretoekized dataset
+HF_REPO_NAME = "AndrisWillow" # HF PROFILE NAME TODO
 
 # crosscoder stuff
 
