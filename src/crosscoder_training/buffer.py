@@ -1,6 +1,8 @@
-from utils import *
 from transformer_lens import ActivationCache
 import tqdm
+import torch
+import einops
+import numpy as np
 
 class Buffer:
     """

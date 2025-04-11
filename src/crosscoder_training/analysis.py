@@ -1,6 +1,7 @@
 # %%
-from utils import *
 from crosscoder import CrossCoder
+import plotly.express as px
+import torch
 torch.set_grad_enabled(False);
 # %%
 cross_coder = CrossCoder.load_from_hf()
@@ -40,8 +41,7 @@ shared_latent_mask.shape
 cosine_sims = (cross_coder.W_dec[:, 0, :] * cross_coder.W_dec[:, 1, :]).sum(dim=-1) / (cross_coder.W_dec[:, 0, :].norm(dim=-1) * cross_coder.W_dec[:, 1, :].norm(dim=-1))
 cosine_sims.shape
 # %%
-import plotly.express as px
-import torch
+
 
 fig = px.histogram(
     cosine_sims[shared_latent_mask].to(torch.float32).detach().cpu().numpy(), 
@@ -57,3 +57,4 @@ fig.update_yaxes(title_text="Number of Latents (log scale)")
 
 fig.show()
 # %%
+

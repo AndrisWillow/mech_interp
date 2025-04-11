@@ -1,16 +1,27 @@
 # %%
-from utils import *
+from transformer_lens import HookedTransformer
+from utils import load_pile_lmsys_mixed_tokens, arg_parse_update_cfg
 from trainer import Trainer
 # %%
+
+# TODO add all variables here defined via CLI
+BASE_MODEL_NAME = "meta-llama/Llama-3.2-1B"
+COMPARABLE_MODEL_NAME = "meta-llama/Llama-3.2-1B-Instruct"
+MODEL_HOOKPOINT = "blocks.13.hook_resid_pre"
+SAE_EXPANSION_RATE = 8
+
+WANDB_PROJECT = "Qwen-crosscoders"
+WANDB_ENTITY = "andris-willow-"
+
 device = 'cuda:0'
 
 base_model = HookedTransformer.from_pretrained(
-    "Qwen/Qwen2.5-0.5B", 
+    BASE_MODEL_NAME, 
     device=device, 
 )
 
 chat_model = HookedTransformer.from_pretrained(
-    "Qwen/Qwen2.5-0.5B-Instruct", 
+    COMPARABLE_MODEL_NAME, 
     device=device, 
 )
 
@@ -24,23 +35,23 @@ default_cfg = {
     "buffer_mult": 128,
     "lr": 5e-5,
     "num_tokens": 400_000_000,
-    "l1_coeff": 2, # maybe use 4? Seems a little low.
+    "l1_coeff": 2,
     "beta1": 0.9, # Default
     "beta2": 0.999, # defualt
     "d_in": base_model.cfg.d_model,
-    "dict_size": base_model.cfg.d_model * 16, # 896 * 16 = 14,336
+    "dict_size": base_model.cfg.d_model * SAE_EXPANSION_RATE,
     "seq_len": 1024,
     "enc_dtype": "fp32",
-    "model_name": "Qwen/Qwen2.5-0.5B",
+    "model_name": BASE_MODEL_NAME,
     "site": "resid_pre",
     "device": "cuda:0",
     "model_batch_size": 4, 
     "log_every": 100,
     "save_every": 30000,
     "dec_init_norm": 0.08,
-    "hook_point": "blocks.13.hook_resid_pre", # figure out which hookpoint to add crosscoder
-    "wandb_project": "Qwen-crosscoders",
-    "wandb_entity": "andris-willow-",
+    "hook_point": MODEL_HOOKPOINT,
+    "wandb_project": WANDB_PROJECT,
+    "wandb_entity": WANDB_ENTITY,
 }
 cfg = arg_parse_update_cfg(default_cfg)
 

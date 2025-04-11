@@ -1,9 +1,10 @@
-from utils import *
 from crosscoder import CrossCoder
 from buffer import Buffer
 import tqdm
-
+import torch
 from torch.nn.utils import clip_grad_norm_
+import wandb
+
 class Trainer:
     def __init__(self, cfg, model_A, model_B, all_tokens):
         self.cfg = cfg

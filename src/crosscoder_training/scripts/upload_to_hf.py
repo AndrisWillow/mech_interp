@@ -3,7 +3,7 @@ from pathlib import Path
 import shutil
 
 # TODO make relative path
-script_dir = Path(__file__).parent.resolve()
+script_dir = Path(__file__).parent.parent.resolve()
 SAVE_DIR = script_dir / "workspace" / "crosscoder-model-diff-replication" / "checkpoints"
 
 model_name = "AndrisWillow/Qwen2.5-0.5B-crosscoder-13resid_pre" # to upload
