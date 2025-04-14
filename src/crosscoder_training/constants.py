@@ -1,5 +1,5 @@
-BASE_MODEL_NAME = "Qwen/Qwen2-0.5B" # We are using hooked models - https://transformerlensorg.github.io/TransformerLens/generated/model_properties_table.html
-COMPARABLE_MODEL_NAME = "Qwen/Qwen2-0.5B-Instruct"
+BASE_MODEL_NAME = "Qwen/Qwen2.5-0.5B" # We are using hooked models - https://transformerlensorg.github.io/TransformerLens/generated/model_properties_table.html
+COMPARABLE_MODEL_NAME = "Qwen/Qwen2.5-0.5B-Instruct"
 MODEL_HOOKPOINT = "blocks.20.hook_resid_pre"
 SAE_EXPANSION_RATE = 16
 WANDB_PROJECT = "Crosscoders"

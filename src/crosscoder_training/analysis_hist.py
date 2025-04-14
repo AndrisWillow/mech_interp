@@ -63,3 +63,13 @@ fig.update_layout(showlegend=False)
 fig.update_yaxes(title_text="Number of Latents (log scale)")
 
 fig.show()
+# %% 
+# Get IT specific latents indecies for analsis in SAE vis:
+
+it_specific_indices = torch.where(relative_norms > 0.99)[0]
+
+# Convert the tensor of indices to a Python list.
+it_specific_latents = it_specific_indices.tolist()
+print(len(it_specific_latents))
+print("IT-specific latent indices (relative norm == 1):", it_specific_latents)
+# %%
