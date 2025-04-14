@@ -7,10 +7,10 @@ from datasets import load_dataset
 from pathlib import Path
 import torch
 from IPython import get_ipython
+from constants import HF_DS_NAME, HF_PROFILE_NAME
 
 # TODO define one file for config
-HF_DS_NAME = "Pile-Lmsys-1m-tokenized-Llama-3.2-1B" # Expecting pretoekized dataset
-HF_REPO_NAME = "AndrisWillow" # HF PROFILE NAME TODO
+
 
 # crosscoder stuff
 
@@ -43,7 +43,7 @@ def arg_parse_update_cfg(default_cfg):
     print(json.dumps(cfg, indent=2))
     return cfg    
 
-def load_pile_lmsys_mixed_tokens():
+def load_HF_tokenized_DS():
     script_dir = Path(__file__).parent.resolve()
     data_dir = script_dir / "workspace" / "data"
     cache_dir = script_dir / "workspace" / "cache"
@@ -60,7 +60,7 @@ def load_pile_lmsys_mixed_tokens():
     except:
         print("Data is not cached. Loading data from HF")
         data = load_dataset(
-            f"{HF_REPO_NAME}/{HF_DS_NAME}", 
+            f"{HF_PROFILE_NAME}/{HF_DS_NAME}", 
             split="train", 
             cache_dir=str(cache_dir)
         )

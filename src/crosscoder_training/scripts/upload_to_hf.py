@@ -2,7 +2,6 @@ from huggingface_hub import HfApi, Repository
 from pathlib import Path
 import shutil
 
-# TODO make relative path
 script_dir = Path(__file__).parent.parent.resolve()
 SAVE_DIR = script_dir / "workspace" / "crosscoder-model-diff-replication" / "checkpoints"
 

@@ -2,7 +2,9 @@
 from crosscoder import CrossCoder
 import plotly.express as px
 import torch
-torch.set_grad_enabled(False);
+from utils import load_HF_tokenized_DS
+
+torch.set_grad_enabled(False); # for memory reduction
 # %%
 cross_coder = CrossCoder.load_from_hf()
 
@@ -16,13 +18,18 @@ relative_norms.shape
 
 fig = px.histogram(
     relative_norms.detach().cpu().numpy(), 
-    title="Qwen2.5-0.5B Base vs IT Model Diff",
+    title="Qwen2.5-05B-20resid-pre Base vs IT Model Diff",
     labels={"value": "Relative decoder norm strength"},
     nbins=200,
 )
 
 fig.update_layout(showlegend=False)
-fig.update_yaxes(title_text="Number of Latents")
+fig.update_yaxes(
+    title_text="Number of Latents",
+    type="log",
+    tickvals=[10**i for i in range(0, 6)],  # 10^0 to 10^5
+    ticktext=[f"10^{i}" for i in range(0, 6)]
+)
 
 # Update x-axis ticks
 fig.update_xaxes(
@@ -56,5 +63,3 @@ fig.update_layout(showlegend=False)
 fig.update_yaxes(title_text="Number of Latents (log scale)")
 
 fig.show()
-# %%
-

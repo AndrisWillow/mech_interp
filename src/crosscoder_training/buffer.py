@@ -55,7 +55,6 @@ class Buffer:
                 return_type=None,
             )
             acts = cache[self.cfg["hook_point"]]
-            # TODO: maybe drop BOS here
             norms_per_batch.append(acts.norm(dim=-1).mean().item())
         mean_norm = np.mean(norms_per_batch)
         scaling_factor = np.sqrt(model.cfg.d_model) / mean_norm
@@ -89,7 +88,6 @@ class Buffer:
                 cache_B: ActivationCache
 
                 acts = torch.stack([cache_A[self.cfg["hook_point"]], cache_B[self.cfg["hook_point"]]], dim=0)
-                # acts = acts[:, :, 1:, :] # Drop BOS # TODO what if I had no BOS?
                 assert acts.shape == (2, tokens.shape[0], tokens.shape[1], self.model_A.cfg.d_model) # [2, batch, seq_len, d_model]
                 
                 # Rearrange from [2, batch, seq_len, d_model] to [(batch * seq_len), 2, d_model]

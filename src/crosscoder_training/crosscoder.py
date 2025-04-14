@@ -7,6 +7,7 @@ import torch
 from pathlib import Path
 import einops
 import json
+from constants import HF_CROSSCODER_REPO, HF_CROSSCODER_CONFIG_PATH, HF_CROSSCODER_WEIGHTS
 
 DTYPES = {"fp32": torch.float32, "fp16": torch.float16, "bf16": torch.bfloat16}
 script_dir = Path(__file__).parent.resolve()
@@ -157,8 +158,7 @@ class CrossCoder(nn.Module):
     @classmethod
     def load_from_hf(
         cls,
-        repo_id: str = "AndrisWillow/Qwen2.5-0.5B-crosscoder-13resid_pre", 
-        # path: str = "blocks.13.hook_resid_pre", # TODO
+        repo_id: str = HF_CROSSCODER_REPO, 
         device: Optional[Union[str, torch.device]] = None
     ) -> "CrossCoder":
         """
@@ -177,11 +177,11 @@ class CrossCoder(nn.Module):
         # Download config and weights
         config_path = hf_hub_download(
             repo_id=repo_id,
-            filename=f"cfg.json"
+            filename=f"{HF_CROSSCODER_CONFIG_PATH}" 
         )
         weights_path = hf_hub_download(
             repo_id=repo_id,
-            filename=f"cc_weights.pt"
+            filename=f"{HF_CROSSCODER_WEIGHTS}"
         )
 
         # Load config
