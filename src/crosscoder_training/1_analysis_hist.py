@@ -2,7 +2,6 @@
 from crosscoder import CrossCoder
 import plotly.express as px
 import torch
-from utils import load_HF_tokenized_DS
 
 torch.set_grad_enabled(False); # for memory reduction
 # %%
@@ -63,13 +62,40 @@ fig.update_layout(showlegend=False)
 fig.update_yaxes(title_text="Number of Latents (log scale)")
 
 fig.show()
-# %% 
-# Get IT specific latents indecies for analsis in SAE vis:
 
-it_specific_indices = torch.where(relative_norms > 0.99)[0]
+# %%
+# Extract IT-specific, Base-specific, and Shared latent indices for SAE Vis analysis
 
-# Convert the tensor of indices to a Python list.
-it_specific_latents = it_specific_indices.tolist()
-print(len(it_specific_latents))
-print("IT-specific latent indices (relative norm == 1):", it_specific_latents)
+# Get latents where the second model (e.g. IT model) dominates
+it_specific_latent_ids = torch.where(relative_norms > 0.99)[0]
+
+# Get latents where the first model (e.g. base model) dominates
+base_specific_latent_ids = torch.where(relative_norms <= 0.0025)[0]
+
+# Get latents that are "shared" between the models — i.e., near-balanced decoder norm
+shared_mask = (relative_norms >= 0.5) & (relative_norms <= 0.55)
+shared_latent_ids_all = torch.where(shared_mask)[0]
+
+# Sample 100 random shared latents from the full shared set
+num_samples = 100
+if len(shared_latent_ids_all) > num_samples:
+    sampled_indices = torch.randperm(len(shared_latent_ids_all))[:num_samples]
+    shared_latent_ids = shared_latent_ids_all[sampled_indices]
+else:
+    shared_latent_ids = shared_latent_ids_all  # Use all if fewer than 100 available
+
+# Convert the tensors to plain Python lists for compatibility with plotting, storage, etc.
+it_specific_latents = it_specific_latent_ids.tolist()
+base_specific_latents = base_specific_latent_ids.tolist()
+shared_latents = shared_latent_ids.tolist()
+
+# Logging the results
+print(f"Found {len(it_specific_latents)} IT-specific latents")
+print("IT-specific latent indices:", it_specific_latents)
+
+print(f"Found {len(base_specific_latents)} Base-specific latents")
+print("Base-specific latent indices:", base_specific_latents)
+
+print(f"Sampled {len(shared_latents)} shared latents")
+print("Shared latent indices (sampled from relative norm 0.5–0.55):", shared_latents)
 # %%

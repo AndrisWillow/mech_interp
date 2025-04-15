@@ -193,93 +193,95 @@ print("Averaged CE recovered metrics:")
 for k, v in avg_metrics.items():
     print(f"{k}: {v:.4f}")
 
-# # %%
-# !pip install git+https://github.com/ckkissane/sae_vis.git@crosscoder-vis
-# # %%
-# # SAE VIS TODO
+# %%
+!pip install git+https://github.com/ckkissane/sae_vis.git@crosscoder-vis
+# %%
+# SAE VIS TODO
 
-# import copy
-# folded_cross_coder = copy.deepcopy(cross_coder)
+import copy
+folded_cross_coder = copy.deepcopy(cross_coder)
 
-# def fold_activation_scaling_factor(cross_coder, base_scaling_factor, chat_scaling_factor):
-#     cross_coder.W_enc.data[0, :, :] *= base_scaling_factor
-#     cross_coder.W_enc.data[1, :, :] *= chat_scaling_factor
+def fold_activation_scaling_factor(cross_coder, base_scaling_factor, chat_scaling_factor):
+    cross_coder.W_enc.data[0, :, :] *= base_scaling_factor
+    cross_coder.W_enc.data[1, :, :] *= chat_scaling_factor
     
-#     return cross_coder
+    return cross_coder
 
-# folded_cross_coder = fold_activation_scaling_factor(folded_cross_coder, base_scaling_factor, chat_scaling_factor)
-# # %%
-# from sae_vis.model_fns import CrossCoderConfig, CrossCoder
+folded_cross_coder = fold_activation_scaling_factor(folded_cross_coder, base_scaling_factor, chat_scaling_factor)
+# %%
+from sae_vis.model_fns import CrossCoderConfig, CrossCoder
 
-# encoder_cfg = CrossCoderConfig(d_in=base_model.cfg.d_model, d_hidden=cross_coder.cfg["dict_size"], apply_b_dec_to_input=False)
-# sae_vis_cross_coder = CrossCoder(encoder_cfg)
-# sae_vis_cross_coder.load_state_dict(folded_cross_coder.state_dict())
-# sae_vis_cross_coder = sae_vis_cross_coder.to("cuda:0")
-# sae_vis_cross_coder = sae_vis_cross_coder.to(torch.bfloat16)
-# sae_vis_cross_coder = folded_cross_coder.to("cuda:0").to(torch.bfloat16)
-# # %%
-# IT_specific_latents = list(range(100))
-# from sae_vis.data_config_classes import SaeVisConfig
-# test_feature_idx = IT_specific_latents
-# sae_vis_config = SaeVisConfig(
-#     hook_point = folded_cross_coder.cfg["hook_point"],
-#     features = test_feature_idx,
-#     verbose = True,
-#     minibatch_size_tokens=4,
-#     minibatch_size_features=16,
-# )
-# # %%
-# from sae_vis.data_storing_fns import SaeVisData
-# sae_vis_data = SaeVisData.create(
-#     encoder = sae_vis_cross_coder,
-#     encoder_B = None,
-#     model_A = base_model,
-#     model_B = chat_model,
-#     tokens = all_tokens[:128], # in practice, better to use more data
-#     cfg = sae_vis_config,
-# )
-# # %%
-# import os
-# import http
-# import socketserver
-# import threading
-# import webbrowser
+encoder_cfg = CrossCoderConfig(d_in=base_model.cfg.d_model, d_hidden=cross_coder.cfg["dict_size"], apply_b_dec_to_input=False)
+sae_vis_cross_coder = CrossCoder(encoder_cfg)
+sae_vis_cross_coder.load_state_dict(folded_cross_coder.state_dict())
+sae_vis_cross_coder = sae_vis_cross_coder.to("cuda:0")
+sae_vis_cross_coder = sae_vis_cross_coder.to(torch.bfloat16)
+sae_vis_cross_coder = folded_cross_coder.to("cuda:0").to(torch.bfloat16)
+# %%
+# Latent ids gotten from 1_analysis_hist
+IT_specific_latents=[107, 578, 658, 895, 1559, 1859, 2003, 2217, 2442, 2761, 2851, 3042, 3406, 3416, 3442, 3456, 3595, 3777, 3871, 3896, 3953, 3985, 4259, 4290, 4291, 4568, 4608, 5074, 5144, 5439, 5479, 5480, 5493, 5676, 5797, 5899, 6009, 6098, 6141, 6251, 6524, 6701, 6929, 7069, 7370, 7412, 7417, 7608, 7625, 7659, 7924, 7954, 8065, 8071, 8114, 8178, 8200, 8204, 8321, 8398, 8420, 8658, 8777, 8780, 8800, 8812, 8823, 8830, 8888, 8892, 9008, 9242, 9393, 9631, 9839, 9899, 10035, 10100, 10332, 10458, 10577, 10665, 10729, 10807, 11017, 11167, 11589, 11646, 11703, 11762, 11883, 12002, 12310, 12901, 13117, 13210, 13228, 13323, 13332, 13443, 13580, 13593, 13725, 13798, 14058, 14355, 14401, 14417, 14571, 14573, 14906, 15000, 15100, 15212, 15823, 15931, 16015]
+from sae_vis.data_config_classes import SaeVisConfig
+test_feature_idx = IT_specific_latents
+sae_vis_config = SaeVisConfig(
+    hook_point = folded_cross_coder.cfg["hook_point"],
+    features = test_feature_idx,
+    verbose = True,
+    # Max for RTX3090
+    minibatch_size_tokens=6,
+    minibatch_size_features=24,
+)
+# %%
+from sae_vis.data_storing_fns import SaeVisData
+sae_vis_data = SaeVisData.create(
+    encoder = sae_vis_cross_coder,
+    encoder_B = None,
+    model_A = base_model,
+    model_B = chat_model,
+    tokens = all_tokens[:1024], # in practice, better to use more data
+    cfg = sae_vis_config,
+)
+# %%
+import os
+import http
+import socketserver
+import threading
+import webbrowser
 
-# PORT = 8000
+PORT = 8000
 
-# def display_vis_inline(filename: str, height: int = 850):
-#     """
-#     Launches a local HTTP server to serve files from the current working directory,
-#     then opens the specified file URL (http://localhost:PORT/filename) in the default web browser.
-#     """
-#     global PORT
+def display_vis_inline(filename: str, height: int = 850):
+    """
+    Launches a local HTTP server to serve files from the current working directory,
+    then opens the specified file URL (http://localhost:PORT/filename) in the default web browser.
+    """
+    global PORT
 
-#     # This inner function serves files from a specified directory.
-#     def serve(directory):
-#         os.chdir(directory)
-#         handler = http.server.SimpleHTTPRequestHandler
-#         # Create and run a TCP server that listens on PORT.
-#         with socketserver.TCPServer(("", PORT), handler) as httpd:
-#             print(f"Serving files from {directory} on port {PORT}")
-#             httpd.serve_forever()
+    # This inner function serves files from a specified directory.
+    def serve(directory):
+        os.chdir(directory)
+        handler = http.server.SimpleHTTPRequestHandler
+        # Create and run a TCP server that listens on PORT.
+        with socketserver.TCPServer(("", PORT), handler) as httpd:
+            print(f"Serving files from {directory} on port {PORT}")
+            httpd.serve_forever()
 
-#     # Start the HTTP server in a separate daemon thread.
-#     thread = threading.Thread(target=serve, args=(os.getcwd(),))
-#     thread.setDaemon(True)
-#     thread.start()
+    # Start the HTTP server in a separate daemon thread.
+    thread = threading.Thread(target=serve, args=(os.getcwd(),))
+    thread.setDaemon(True)
+    thread.start()
 
-#     # Build the URL for the file and open it in the default web browser.
-#     url = f"http://localhost:{PORT}/{filename}"
-#     print(f"Opening URL: {url}")
-#     webbrowser.open(url)
+    # Build the URL for the file and open it in the default web browser.
+    url = f"http://localhost:{PORT}/{filename}"
+    print(f"Opening URL: {url}")
+    webbrowser.open(url)
 
-#     PORT += 1
+    PORT += 1
 
-# # %%
-# # Save the visualization HTML file.
-# filename = "_feature_vis_demo.html"
-# sae_vis_data.save_feature_centric_vis(filename)
+# %%
+# Save the visualization HTML file.
+filename = "_feature_vis_demo_llama-1024-itSpecific.html"
+sae_vis_data.save_feature_centric_vis(filename)
 
-# # Display the visualization by opening it in a browser.
-# display_vis_inline(filename)
-# # %%
+# Display the visualization by opening it in a browser.
+display_vis_inline(filename)
+# %%
