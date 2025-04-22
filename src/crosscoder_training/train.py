@@ -2,18 +2,18 @@
 from transformer_lens import HookedTransformer
 from utils import load_HF_tokenized_DS, arg_parse_update_cfg
 from trainer import Trainer
-from constants import BASE_MODEL_NAME, COMPARABLE_MODEL_NAME, default_cfg
+from constants import default_cfg
 # %%
 # Load models
 device = 'cuda:0'
 
 base_model = HookedTransformer.from_pretrained(
-    BASE_MODEL_NAME, 
+    default_cfg["base_model"], 
     device=device, 
 )
 
 chat_model = HookedTransformer.from_pretrained(
-    COMPARABLE_MODEL_NAME, 
+    default_cfg["comperable_model"], 
     device=device, 
 )
 

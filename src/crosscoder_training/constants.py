@@ -11,7 +11,7 @@ HF_DS_NAME = "Pile-Lmsys-1m-tokenized-1024-Qwen2.5" # Expecting pretoekized data
 HF_PROFILE_NAME = "AndrisWillow"
 
 # For loading in a trained crosscoder
-HF_CROSSCODER_REPO = "AndrisWillow/Qwen2.5-0.5B-crosscoder-20resid_pre"
+HF_CROSSCODER_REPO = "AndrisWillow/Llama-3.2-1B-crosscoder-13resid_pre"
 HF_CROSSCODER_CONFIG_PATH = "3_cfg.json"
 HF_CROSSCODER_WEIGHTS = "3.pt"
 
@@ -23,12 +23,13 @@ default_cfg = {
     "num_tokens": 400_000_000,
     "l1_coeff": 2,
     "beta1": 0.9, # Default
-    "beta2": 0.999, # defualt
+    "beta2": 0.999, # Defualt
     "d_in": D_MODEL,
     "dict_size": D_MODEL * SAE_EXPANSION_RATE,
     "seq_len": 1024,
     "enc_dtype": "fp32",
-    "model_name": BASE_MODEL_NAME,
+    "base_model": BASE_MODEL_NAME,
+    "comperable_model": COMPARABLE_MODEL_NAME,
     "site": "resid_pre",
     "device": "cuda:0",
     "model_batch_size": 4, 

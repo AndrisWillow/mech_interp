@@ -4,7 +4,7 @@ import torch
 from utils import load_HF_tokenized_DS
 from transformer_lens import HookedTransformer
 from buffer import Buffer
-from constants import BASE_MODEL_NAME, COMPARABLE_MODEL_NAME, default_cfg
+from constants import default_cfg
 import copy
 from functools import partial
 import einops
@@ -22,12 +22,12 @@ all_tokens = load_HF_tokenized_DS()
 
 device = 'cuda:0'
 base_model = HookedTransformer.from_pretrained(
-    BASE_MODEL_NAME, 
+    default_cfg["base_model"], 
     device=device,
     dtype=torch.bfloat16, 
 )
 chat_model = HookedTransformer.from_pretrained(
-    COMPARABLE_MODEL_NAME, 
+    default_cfg["comperable_model"], 
     device=device,
     dtype=torch.bfloat16, 
 )
