@@ -9,7 +9,7 @@ torch.set_grad_enabled(False); # for memory reduction
 cross_coder = CrossCoder.load_from_hf()
 
 # Load tokenized dataset (all_tokens could be very large, but our Buffer uses a subset for scaling).
-all_tokens = load_HF_tokenized_DS()
+all_tokens = load_HF_tokenized_DS(as_tensor=True)
 
 device = 'cuda:0'
 

@@ -18,7 +18,7 @@ chat_model = HookedTransformer.from_pretrained(
 )
 
 # %%
-all_tokens = load_HF_tokenized_DS()
+all_tokens = load_HF_tokenized_DS(as_tensor=True)
 
 # %%
 cfg = arg_parse_update_cfg(default_cfg) # TODO see if we still need this

@@ -2,6 +2,7 @@
 from crosscoder import CrossCoder
 import plotly.express as px
 import torch
+from constants import HF_CROSSCODER_REPO
 
 torch.set_grad_enabled(False); # for memory reduction
 # %%
@@ -16,15 +17,15 @@ relative_norms.shape
 # %%
 
 fig = px.histogram(
-    relative_norms.detach().cpu().numpy(), 
-    title="Qwen2.5-05B-20resid-pre Base vs IT Model Diff",
-    labels={"value": "Relative decoder norm strength"},
+    relative_norms.detach().cpu().numpy(),
+    title=f"{HF_CROSSCODER_REPO}",
+    labels={"value": "Relatīvās dekoderu latentu normu atšķirības"}, #  Decoder latent relative norm difference
     nbins=200,
 )
 
 fig.update_layout(showlegend=False)
 fig.update_yaxes(
-    title_text="Number of Latents",
+    title_text="Latentu skaits", # Latent count
     type="log",
     tickvals=[10**i for i in range(0, 6)],  # 10^0 to 10^5
     ticktext=[f"10^{i}" for i in range(0, 6)]

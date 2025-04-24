@@ -12,13 +12,12 @@ import tqdm
 import numpy as np
 
 torch.set_grad_enabled(False)  # Disable gradients to reduce memory usage.
-
 # %%
 # Load the crosscoder and both the base and comparable (chat) models.
 cross_coder = CrossCoder.load_from_hf()
 
 # Load tokenized dataset (all_tokens could be very large, but our Buffer uses a subset for scaling).
-all_tokens = load_HF_tokenized_DS()
+all_tokens = load_HF_tokenized_DS(as_tensor=True) # TODO (out of RAM issues!) Modify the code so it doesn't have to rely on loading all of the tokens at once
 
 device = 'cuda:0'
 base_model = HookedTransformer.from_pretrained(

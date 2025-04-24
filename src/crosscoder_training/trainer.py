@@ -34,7 +34,6 @@ class Trainer:
 
     def get_l1_coeff(self):
         # Linearly increases from 0 to cfg["l1_coeff"] over the first 0.05 * self.total_steps steps, then keeps it constant
-        # Is this like warmup steps?
         if self.step_counter < 0.05 * self.total_steps:
             return self.cfg["l1_coeff"] * self.step_counter / (0.05 * self.total_steps)
         else:
