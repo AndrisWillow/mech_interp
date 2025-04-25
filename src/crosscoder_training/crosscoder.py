@@ -68,7 +68,6 @@ class CrossCoder(nn.Module):
 
         self.to(self.cfg["device"])
         self.save_dir = None
-        self.save_version = 0
 
     def encode(self, x, apply_relu=True):
         # x: [batch, n_models, d_model]
@@ -130,6 +129,7 @@ class CrossCoder(nn.Module):
         return LossOutput(l2_loss=l2_loss, l1_loss=l1_loss, l0_loss=l0_loss, explained_variance=explained_variance, explained_variance_A=explained_variance_A, explained_variance_B=explained_variance_B)
 
     def create_save_dir(self):
+        version = 0
         version_list = [
             int(file.name.split("_")[1])
             for file in list(SAVE_DIR.iterdir())
@@ -145,14 +145,14 @@ class CrossCoder(nn.Module):
     def save(self):
         if self.save_dir is None:
             self.create_save_dir()
-        weight_path = self.save_dir / f"{self.save_version}.pt"
-        cfg_path = self.save_dir / f"{self.save_version}_cfg.json"
+        weight_path = self.save_dir / f"cc_weights.pt"
+        cfg_path = self.save_dir / f"cfg.json"
 
         torch.save(self.state_dict(), weight_path)
         with open(cfg_path, "w") as f:
             json.dump(self.cfg, f)
 
-        print(f"Saved as version {self.save_version} in {self.save_dir}")
+        print(f"Saved new version in {self.save_dir}")
         self.save_version += 1
 
     @classmethod
