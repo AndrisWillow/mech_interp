@@ -40,5 +40,5 @@ default_cfg = {
     "wandb_entity": WANDB_ENTITY, # Your WandB team name
     # Buffer settings
     "buffer_mult": 128, # TODO add simple explenation 
-    "model_batch_size": 4, # TODO add simple explenation
+    "model_batch_size": 4, # Number of token-chunks to process per refresh loop
 }

@@ -44,13 +44,6 @@ class CrossCoder(nn.Module):
                 )
             )
         )
-        self.W_dec = nn.Parameter(
-            torch.nn.init.normal_(
-                torch.empty(
-                    d_hidden, 2, d_in, dtype=self.dtype
-                )
-            )
-        )
         # Make norm of W_dec 0.1 for each column, separate per layer
         self.W_dec.data = (
             self.W_dec.data / self.W_dec.data.norm(dim=-1, keepdim=True) * self.cfg["dec_init_norm"]
