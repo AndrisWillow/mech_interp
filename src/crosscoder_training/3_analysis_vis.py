@@ -193,6 +193,8 @@ for k, v in avg_metrics.items():
     print(f"{k}: {v:.4f}")
 
 # %%
+# This breaks new model loading, but if you have loaded in the model you can visualize this
+# TODO maybe can fix up this repo to use newer dependencies
 !pip install git+https://github.com/ckkissane/sae_vis.git@crosscoder-vis
 # %%
 # SAE VIS TODO
