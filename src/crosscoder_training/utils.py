@@ -3,17 +3,13 @@ import plotly.io as pio
 pio.renderers.default = "jupyterlab"
 import json
 import argparse
-from datasets import load_dataset
+from datasets import load_dataset, load_from_disk
 from pathlib import Path
 import torch
 from IPython import get_ipython
+from constants import HF_DS_NAME, HF_PROFILE_NAME
 
-# TODO define one file for config
-HF_DS_NAME = "Pile-Lmsys-1m-tokenized-Llama-3.2-1B" # Expecting pretoekized dataset
-HF_REPO_NAME = "AndrisWillow" # HF PROFILE NAME TODO
-
-# crosscoder stuff
-
+# TODO maybe remove this function?
 def arg_parse_update_cfg(default_cfg):
     """
     Helper function to take in a dictionary of arguments, convert these to command line arguments, look at what was passed in, and return an updated dictionary.
@@ -43,30 +39,34 @@ def arg_parse_update_cfg(default_cfg):
     print(json.dumps(cfg, indent=2))
     return cfg    
 
-def load_pile_lmsys_mixed_tokens():
+def load_HF_tokenized_DS(as_tensor=False):
     script_dir = Path(__file__).parent.resolve()
     data_dir = script_dir / "workspace" / "data"
     cache_dir = script_dir / "workspace" / "cache"
 
-    data_file = data_dir / f"{HF_DS_NAME}.pt"
     hf_disk_dir = data_dir / f"{HF_DS_NAME}.hf"
 
     data_dir.mkdir(parents=True, exist_ok=True)
     cache_dir.mkdir(parents=True, exist_ok=True)
 
     try:
-        print("Loading data from disk")
-        all_tokens = torch.load(data_file)
+        print("Loading dataset from disk")
+        dataset = load_from_disk(str(hf_disk_dir))
     except:
-        print("Data is not cached. Loading data from HF")
-        data = load_dataset(
-            f"{HF_REPO_NAME}/{HF_DS_NAME}", 
+        print("Data is not cached. Loading dataset from HF")
+        dataset = load_dataset(
+            f"{HF_PROFILE_NAME}/{HF_DS_NAME}", 
             split="train", 
             cache_dir=str(cache_dir)
         )
-        data.save_to_disk(str(hf_disk_dir))
-        data.set_format(type="torch", columns=["input_ids"])
-        all_tokens = data["input_ids"]
-        torch.save(all_tokens, data_file)
-        print(f"Saved tokens to disk at {data_file}")
-    return all_tokens
+        dataset.save_to_disk(str(hf_disk_dir))
+        print(f"Saved dataset to disk at {hf_disk_dir}")
+
+    dataset.set_format(type="torch", columns=["input_ids"])
+
+    if as_tensor:
+        # Returning all tokens as a tensor
+        return torch.cat([x["input_ids"] for x in dataset])
+
+    return dataset
+

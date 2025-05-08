@@ -7,6 +7,7 @@ import torch
 from pathlib import Path
 import einops
 import json
+from constants import HF_CROSSCODER_REPO, HF_CROSSCODER_CONFIG_PATH, HF_CROSSCODER_WEIGHTS
 
 DTYPES = {"fp32": torch.float32, "fp16": torch.float16, "bf16": torch.bfloat16}
 script_dir = Path(__file__).parent.resolve()
@@ -43,13 +44,6 @@ class CrossCoder(nn.Module):
                 )
             )
         )
-        self.W_dec = nn.Parameter(
-            torch.nn.init.normal_(
-                torch.empty(
-                    d_hidden, 2, d_in, dtype=self.dtype
-                )
-            )
-        )
         # Make norm of W_dec 0.1 for each column, separate per layer
         self.W_dec.data = (
             self.W_dec.data / self.W_dec.data.norm(dim=-1, keepdim=True) * self.cfg["dec_init_norm"]
@@ -67,7 +61,6 @@ class CrossCoder(nn.Module):
 
         self.to(self.cfg["device"])
         self.save_dir = None
-        self.save_version = 0
 
     def encode(self, x, apply_relu=True):
         # x: [batch, n_models, d_model]
@@ -129,6 +122,7 @@ class CrossCoder(nn.Module):
         return LossOutput(l2_loss=l2_loss, l1_loss=l1_loss, l0_loss=l0_loss, explained_variance=explained_variance, explained_variance_A=explained_variance_A, explained_variance_B=explained_variance_B)
 
     def create_save_dir(self):
+        version = 0
         version_list = [
             int(file.name.split("_")[1])
             for file in list(SAVE_DIR.iterdir())
@@ -144,21 +138,20 @@ class CrossCoder(nn.Module):
     def save(self):
         if self.save_dir is None:
             self.create_save_dir()
-        weight_path = self.save_dir / f"{self.save_version}.pt"
-        cfg_path = self.save_dir / f"{self.save_version}_cfg.json"
+        weight_path = self.save_dir / f"cc_weights.pt"
+        cfg_path = self.save_dir / f"cfg.json"
 
         torch.save(self.state_dict(), weight_path)
         with open(cfg_path, "w") as f:
             json.dump(self.cfg, f)
 
-        print(f"Saved as version {self.save_version} in {self.save_dir}")
+        print(f"Saved new version in {self.save_dir}")
         self.save_version += 1
 
     @classmethod
     def load_from_hf(
         cls,
-        repo_id: str = "AndrisWillow/Qwen2.5-0.5B-crosscoder-13resid_pre", 
-        # path: str = "blocks.13.hook_resid_pre", # TODO
+        repo_id: str = HF_CROSSCODER_REPO, 
         device: Optional[Union[str, torch.device]] = None
     ) -> "CrossCoder":
         """
@@ -177,11 +170,11 @@ class CrossCoder(nn.Module):
         # Download config and weights
         config_path = hf_hub_download(
             repo_id=repo_id,
-            filename=f"cfg.json"
+            filename=f"{HF_CROSSCODER_CONFIG_PATH}" 
         )
         weights_path = hf_hub_download(
             repo_id=repo_id,
-            filename=f"cc_weights.pt"
+            filename=f"{HF_CROSSCODER_WEIGHTS}"
         )
 
         # Load config
