@@ -11,7 +11,7 @@ HF_DS_NAME = "Pile-Lmsys-1m-tokenized-1024-Qwen2.5-WTemplTok" # Expecting pretoe
 HF_PROFILE_NAME = "AndrisWillow"
 
 # For loading in a trained crosscoder
-HF_CROSSCODER_REPO = "AndrisWillow/Qwen2.5-0.5B-0.5B_it-cc_diff_WTemplTok-13l-resid_pre-14k"  # "AndrisWillow/Qwen2.5-0.5B-crosscoder-13resid_pre"
+HF_CROSSCODER_REPO = "AndrisWillow/Qwen2.5-0.5B-0.5B_it-cc_diff-13l-resid_pre-14k"  # "AndrisWillow/Qwen2.5-0.5B-crosscoder-13resid_pre"
 HF_CROSSCODER_CONFIG_PATH = "cfg.json"
 HF_CROSSCODER_WEIGHTS = "cc_weights.pt"
 

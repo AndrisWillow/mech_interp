@@ -29,11 +29,12 @@ class CrossCoder(nn.Module):
     def __init__(self, cfg):
         super().__init__()
         self.cfg = cfg
-        d_hidden = self.cfg["dict_size"]
-        d_in = self.cfg["d_in"]
+        d_hidden = self.cfg["dict_size"] # d_sae
+        d_in = self.cfg["d_in"] # d_model
         self.dtype = DTYPES[self.cfg["enc_dtype"]]
         torch.manual_seed(self.cfg["seed"])
         # hardcoding n_models to 2
+        # Creating a shared encoder with two dims model A and model B
         self.W_enc = nn.Parameter(
             torch.empty(2, d_in, d_hidden, dtype=self.dtype)
         )
