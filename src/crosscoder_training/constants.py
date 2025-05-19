@@ -16,10 +16,10 @@ HF_CROSSCODER_CONFIG_PATH = "cfg.json"
 HF_CROSSCODER_WEIGHTS = "cc_weights.pt"
 
 default_cfg = {
-    "seed": 49,
+    "seed": 49, # for reproducability
     "seq_len": 1024, # Maximum context length the model is trained on; More would be better
     "batch_size": 4096, # Larger size makes for better gradient stability, lower gives more frequent gradient updates, but might decrease training stability
-    "lr": 5e-5,
+    "lr": 5e-5, # Lr used by orignal authrors
     "num_tokens": 400_000_000,
     "l1_coeff": 2, # L1 sparsity coef
     "beta1": 0.9, # Default; Adam optimizer beta1
@@ -31,14 +31,12 @@ default_cfg = {
     "comperable_model": COMPARABLE_MODEL_NAME,
     "site": "resid_pre",
     "device": "cuda:0",
-    "dec_init_norm": 0.08, # TODO explain what it is and what it does; This paramater is quite sensitive and could be explored more what is an optimal value for it
-    # WandB settings
-    "log_every": 100, # Log to WandB? [Are these steps?]
-    "save_every": 30000, # Save every steps? [Log to WandB?]
+    "dec_init_norm": 0.08, # Sensitive param, original authors found that this was an ok value
+    "log_every": 100, 
+    "save_every": 30000,
     "hook_point": MODEL_HOOKPOINT,
     "wandb_project": WANDB_PROJECT, 
     "wandb_entity": WANDB_ENTITY, # Your WandB team name
-    # Buffer settings
-    "buffer_mult": 128, # TODO add simple explenation 
+    "buffer_mult": 128, # how many samples total are saved in buffer; it refreshes when half is empty; this would be more useful if ran on multiple GPUs
     "model_batch_size": 4, # Number of token-chunks to process per refresh loop
 }
